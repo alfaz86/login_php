@@ -5,9 +5,8 @@ $data = isset($_POST) ? $_POST : null;
 if ($data != null) {
     $query = mysqli_query(
         $connection, 
-        "insert into mahasiswa set
-        nama    = '$data[nama]',
-        nim     = '$data[nim]',
-        alamat  = '$data[alamat]'"
+        "insert into users set
+        username    = '$data[username]',
+        password    = '$data[password]'"
     );
 }

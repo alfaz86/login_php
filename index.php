@@ -4,33 +4,56 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD PHP</title>
+    <title>Data User</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <style>
+        .btn-primary {
+            background-color : #6558F5;
+            border-color : #6558F5;
+        }
+        .btn-primary:active,
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color : #4d40e1 !important;
+            border-color : #4d40e1 !important;
+        }
+        tbody tr:hover {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h1 class="text-center mt-5 mb-5">CRUD Data Mahasiswa</h1>
-    <hr>
+    <?php
+        session_start();
+        if(!isset($_SESSION['status'])) {
+            if ($_SESSION['status'] != "login") header("Location: http://login_php.test/login.php");
+        }
+    ?>
 
     <div class="container mt-5">
-        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addModal">Tambah</button>
-        <table id="index-table" class="table table-bordered">
+        <h1 class="text-left mt-5 mb-5">Data User</h1>
+        <table id="index-table" class="table table-bordered mb-5">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama</th>
-                    <th>NIM</th>
-                    <th>Alamat</th>
-                    <th>Opsi</th>
+                    <th>Username</th>
+                    <th>Password</th>
                 </tr>
             </thead>
             <tbody>
     
             </tbody>
         </table>
+
+        <button type="button" class="btn btn-primary mb-3 mr-3" data-toggle="modal" data-target="#addModal">Buat User</button>
+        <button type="button" class="btn btn-primary mb-3 mr-3" onclick="setEditModal()">Ubah User</button>
+        <button type="button" class="btn btn-primary mb-3 mr-3" onclick="setDeleteModal()">Hapus User</button>
+        <button id="logout" type="button" class="btn btn-primary mb-3 mr-3">Logout User</button>
     </div>
 
 
@@ -39,7 +62,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Tambah Data Mahasiswa</h5>
+                    <h5 class="modal-title" id="addModalLabel">Tambah Data User</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -47,21 +70,15 @@
                 <form id="createData">
                     <div class="modal-body">
                         <div class="form-group row">
-                            <label for="nama" class="col-sm-2">Nama</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" name="nama" id="nama" autocomplete="off">
+                            <label for="username" class="col-sm-3">User Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="username" id="username" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="nim" class="col-sm-2">NIM</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" name="nim" id="nim" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="alamat" class="col-sm-2">Alamat</label>
-                            <div class="col-sm-10">
-                                <textarea class="form-control" name="alamat" id="alamat" cols="30" rows="5"></textarea>
+                            <label for="password" class="col-sm-3">Password</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="password" id="password" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -79,7 +96,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Data Mahasiswa</h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit Data User</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -88,27 +105,21 @@
                     <div class="modal-body">
                         <input type="hidden" name="id" id="id-edit">
                         <div class="form-group row">
-                            <label for="nama" class="col-sm-2">Nama</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" name="nama" id="nama-edit" autocomplete="off">
+                            <label for="username" class="col-sm-3">User Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="username" id="username-edit" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="nim" class="col-sm-2">NIM</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" name="nim" id="nim-edit" autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="alamat" class="col-sm-2">Alamat</label>
-                            <div class="col-sm-10">
-                                <textarea class="form-control" name="alamat" id="alamat-edit" cols="30" rows="5"></textarea>
+                            <label for="password" class="col-sm-3">Password</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="password" id="password-edit" autocomplete="off">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="btn-modal">Simpan</button>
+                        <button type="submit" class="btn btn-primary" id="btn-modal">Update</button>
                     </div>
                 </form>
             </div>
@@ -142,14 +153,30 @@
 
     <!-- Script -->
     <script>
+        let dataset = null;
+
         function readData(){
             $.get( "read.php", function(data) {
                 $("#index-table > tbody").children().remove();
                 $("#index-table > tbody").append(data);
                 $("#index-table > tbody").children().children().addClass("align-middle");
             });
+            dataset = null;
         }
         readData();
+        
+        function setdata(e, data){
+            dataset = data;
+            $("tbody > tr").removeClass("table-secondary");
+            $(e).addClass("table-secondary");
+        }
+
+        $(document).click(function(e){
+            if (!$(e.target).closest('tbody > tr').length) {
+                $("tbody > tr").removeClass("table-secondary");
+                dataset = null;
+            }
+        });
 
         $("#createData").submit(function(e){
             e.preventDefault();
@@ -167,11 +194,12 @@
             });
         });
 
-        function setEditModal(data) {
-            $("#id-edit").val(data.id);
-            $("#nama-edit").val(data.nama);
-            $("#nim-edit").val(data.nim);
-            $("#alamat-edit").val(data.alamat);
+        function setEditModal() {
+            if (dataset == null) return false;
+            $("#editModal").modal('show');
+            $("#id-edit").val(dataset.id);
+            $("#username-edit").val(dataset.username);
+            $("#password-edit").val(dataset.password);
         }
 
         $("#editData").submit(function(e){
@@ -189,8 +217,10 @@
             });
         });
 
-        function setdeleteModal(id){
-            $("#id-delete").val(id);
+        function setDeleteModal(){
+            if (dataset == null) return false;
+            $("#deleteModal").modal('show');
+            $("#id-delete").val(dataset.id);
         }
 
         $("#deleteData").submit(function(e){
@@ -204,6 +234,18 @@
             });
             
             post.fail(function(data) {
+                alert( "error" );
+            });
+        });
+
+        $("#logout").click(function(e){
+            let get = $.get("auth.php")
+            
+            get.done(function(data) {
+                window.location.href = "http://login_php.test/login.php?msg=logout";
+            });
+            
+            get.fail(function(data) {
                 alert( "error" );
             });
         });
